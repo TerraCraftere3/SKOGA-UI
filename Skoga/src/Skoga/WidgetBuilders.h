@@ -42,9 +42,9 @@ namespace Skoga
 
     // Background builder
     template <typename... Children>
-    inline Ref<BackgroundWidget> Background(float r, float g, float b, float a, Children... child)
+    inline Ref<BackgroundWidget> Background(const Color& color, Children... child)
     {
-        auto background = CreateRef<BackgroundWidget>(r, g, b, a);
+        auto background = CreateRef<BackgroundWidget>(color);
         YGNodeStyleSetFlexGrow(background->GetLayoutNode(), 1.0f);
         AddChildren(background, child...);
         return background;
@@ -62,11 +62,23 @@ namespace Skoga
         return textWidget;
     }
 
-    inline Ref<TextWidget> Text(const char* text, float fontSize = 16.0f, const char* fontName = FontSegoeui,
+    inline Ref<TextWidget> Text(const char* text, float fontSize = 16.0f, Color color = Color(),
                                 HorizontalAlignment hAlign = HorizontalAlignment::Left,
                                 VerticalAlignment vAlign = VerticalAlignment::Top)
     {
-        auto textWidget = CreateRef<TextWidget>(text, fontSize, fontName);
+        auto textWidget = CreateRef<TextWidget>(text, fontSize, color);
+        textWidget->SetHorizontalAlignment(hAlign);
+        textWidget->SetVerticalAlignment(vAlign);
+        YGNodeStyleSetFlexGrow(textWidget->GetLayoutNode(), 1.0f);
+        return textWidget;
+    }
+
+    inline Ref<TextWidget> Text(const char* text, float fontSize = 16.0f, Color color = Color(),
+                                const char* fontName = FontSegoeui,
+                                HorizontalAlignment hAlign = HorizontalAlignment::Left,
+                                VerticalAlignment vAlign = VerticalAlignment::Top)
+    {
+        auto textWidget = CreateRef<TextWidget>(text, fontSize, color, fontName);
         textWidget->SetHorizontalAlignment(hAlign);
         textWidget->SetVerticalAlignment(vAlign);
         YGNodeStyleSetFlexGrow(textWidget->GetLayoutNode(), 1.0f);

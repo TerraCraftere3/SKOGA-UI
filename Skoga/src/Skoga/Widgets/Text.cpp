@@ -4,8 +4,8 @@
 
 namespace Skoga
 {
-    TextWidget::TextWidget(const char* text, float fontSize, const char* fontName)
-        : m_Text(text), m_FontSize(fontSize), m_FontName(fontName)
+    TextWidget::TextWidget(const char* text, float fontSize, Color color, const char* fontName)
+        : m_Text(text), m_FontSize(fontSize), m_Color(color), m_FontName(fontName)
     {
         // Set minimum size for the text widget
         YGNodeStyleSetMinHeight(GetLayoutNode(), fontSize * 1.5f);
@@ -42,7 +42,7 @@ namespace Skoga
     {
         nvgFontSize(vg, m_FontSize);
         nvgFontFace(vg, m_FontName);
-        nvgFillColor(vg, nvgRGBA(255, 255, 255, 255));
+        nvgFillColor(vg, nvgRGBAf(m_Color.R, m_Color.G, m_Color.B, m_Color.A));
 
         // Convert alignment enums to NanoVG flags
         int hAlign = NVG_ALIGN_LEFT;

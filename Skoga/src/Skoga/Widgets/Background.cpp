@@ -4,21 +4,18 @@
 
 namespace Skoga
 {
-    BackgroundWidget::BackgroundWidget(float r, float g, float b, float a) : m_R(r), m_G(g), m_B(b), m_A(a) {}
+    BackgroundWidget::BackgroundWidget(const Color& color) : m_Color(color) {}
 
-    void BackgroundWidget::SetColor(float r, float g, float b, float a)
+    void BackgroundWidget::SetColor(const Color& color)
     {
-        m_R = r;
-        m_G = g;
-        m_B = b;
-        m_A = a;
+        m_Color = color;
     }
 
     void BackgroundWidget::DrawSelf(NVGcontext* vg)
     {
         nvgBeginPath(vg);
         nvgRect(vg, 0, 0, Width(), Height());
-        nvgFillColor(vg, nvgRGBAf(m_R, m_G, m_B, m_A));
+        nvgFillColor(vg, nvgRGBAf(m_Color.R, m_Color.G, m_Color.B, m_Color.A));
         nvgFill(vg);
     }
 } // namespace Skoga

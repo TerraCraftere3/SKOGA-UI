@@ -7,15 +7,32 @@
 
 Skoga::Ref<Skoga::Widget> CreateTextAlignment()
 {
+    using namespace Skoga;
+
     // clang-format off
-    auto alignmentContainer = Skoga::Container(
-        Skoga::Background(0.1f, 0.1f, 0.1f, 1.0f,
-            Skoga::Padding(20.0f,
-                Skoga::Stack(
-                    Skoga::Column,
-                    Skoga::Text("Top Left (Arial)", 18.0f, Skoga::FontArial, Skoga::HorizontalAlignment::Left, Skoga::VerticalAlignment::Top),
-                    Skoga::Text("Center Center (Consolas)", 18.0f, Skoga::FontConsolas, Skoga::HorizontalAlignment::Center, Skoga::VerticalAlignment::Middle),
-                    Skoga::Text("Bottom Right (Segoe UI)", 18.0f, Skoga::FontSegoeui, Skoga::HorizontalAlignment::Right, Skoga::VerticalAlignment::Bottom)
+    auto alignmentContainer = Container(
+        Background(Color(0.1f, 0.1f, 0.1f, 1.0f),
+            Padding(20.0f,
+                Stack(
+                    Column,
+                    Text("Top Left (Arial)", 
+                        18.0f, 
+                        Color(1.0f, 0.0f, 0.0f), 
+                        FontArial, 
+                        HorizontalAlignment::Left, 
+                        VerticalAlignment::Top),
+                    Text("Center Center (Consolas)", 
+                        18.0f, 
+                        Color(0.0f, 1.0f, 0.0f), 
+                        FontConsolas, 
+                        HorizontalAlignment::Center, 
+                        VerticalAlignment::Middle),
+                    Text("Bottom Right (Segoe UI)", 
+                        18.0f, 
+                        Color(0.0f, 0.0f, 1.0f), 
+                        FontSegoeui, 
+                        HorizontalAlignment::Right, 
+                        VerticalAlignment::Bottom)
                 )
             )
         )
@@ -27,13 +44,22 @@ Skoga::Ref<Skoga::Widget> CreateTextAlignment()
 
 Skoga::Ref<Skoga::Widget> CreateNestedBackgrounds()
 {
+    using namespace Skoga;
+
     // clang-format off
-    auto nestedBackgrounds = Skoga::Background(0.2f, 0.2f, 0.4f, 1.0f,
-        Skoga::Padding(50.0f,
-            Skoga::Background(0.4f, 0.4f, 0.8f, 1.0f,
-                Skoga::Padding(50.0f,
-                    Skoga::Background(0.6f, 0.6f, 1.0f, 1.0f,
-                        Skoga::Text("Nested Background", 20.0f, Skoga::HorizontalAlignment::Center, Skoga::VerticalAlignment::Middle)
+    auto nestedBackgrounds = Background(Color(0.2f, 0.2f, 0.4f, 1.0f),
+        Padding(50.0f,
+            Background(
+                Color(0.4f, 0.4f, 0.6f, 1.0f),
+                Padding(50.0f,
+                    Background(
+                        Color(0.6f, 0.6f, 0.8f, 1.0f),
+                        Padding(50.0f,
+                            Background(
+                                Color(0.8f, 0.8f, 1.0f, 1.0f),
+                                Text("Nested Background", 20.0f, Color(0.0f, 0.0f, 0.0f), HorizontalAlignment::Center, VerticalAlignment::Middle)
+                            )
+                        )
                     )
                 )
             )
@@ -46,10 +72,12 @@ Skoga::Ref<Skoga::Widget> CreateNestedBackgrounds()
 
 Skoga::Ref<Skoga::Widget> CreateLayout()
 {
+    using namespace Skoga;
+
     // clang-format off
-    auto layout = Skoga::Container(
-        Skoga::Stack(
-            Skoga::Row,
+    auto layout = Container(
+        Stack(
+            Row,
             CreateTextAlignment(),
             CreateNestedBackgrounds()
         )
