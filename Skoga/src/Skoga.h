@@ -1,0 +1,1 @@
+#include <Skoga/Application.h>
