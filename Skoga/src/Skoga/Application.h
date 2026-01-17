@@ -2,10 +2,12 @@
 
 struct GLFWwindow;
 
-namespace Skoga{
+namespace Skoga
+{
     struct Config;
 
-    class Application{
+    class Application
+    {
     public:
         Application(Config* config);
         ~Application();
@@ -15,4 +17,4 @@ namespace Skoga{
     private:
         GLFWwindow* m_Window;
     };
-}
+} // namespace Skoga

@@ -11,5 +11,5 @@ target_include_directories(skoga PUBLIC
 )
 
 # Link internal libraries
-target_link_libraries(skoga PRIVATE glfw glad imgui glm)
+target_link_libraries(skoga PRIVATE glfw glad)
 target_compile_definitions(skoga PUBLIC GLM_ENABLE_EXPERIMENTAL)
