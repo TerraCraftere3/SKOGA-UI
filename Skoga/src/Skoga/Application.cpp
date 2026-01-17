@@ -1,5 +1,6 @@
 #include "Application.h"
 #include "Config.h"
+#include "Widget.h"
 
 // clang-format off
 #include <glad/glad.h>
@@ -11,6 +12,16 @@
 
 namespace Skoga
 {
+    class RootWidget : public Widget
+    {
+    public:
+        RootWidget() = default;
+        virtual ~RootWidget() = default;
+
+    protected:
+        void DrawSelf(NVGcontext* vg) override {}
+    };
+
     Application::Application(Config* config)
     {
         if (!glfwInit())
@@ -48,10 +59,17 @@ namespace Skoga
             glfwTerminate();
             return;
         }
+
+        m_RootWidget = new RootWidget();
+
+        YGNodeStyleSetWidth(m_RootWidget->GetLayoutNode(), config->WindowWidth);
+        YGNodeStyleSetHeight(m_RootWidget->GetLayoutNode(), config->WindowHeight);
+        YGNodeStyleSetFlexDirection(m_RootWidget->GetLayoutNode(), YGFlexDirectionColumn);
     }
 
     Application::~Application()
     {
+        delete m_RootWidget;
         if (m_VG)
         {
             nvgDeleteGL3(m_VG);
@@ -72,53 +90,28 @@ namespace Skoga
 
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-            // Get window size for proper scaling
             int winWidth, winHeight;
             glfwGetWindowSize(m_Window, &winWidth, &winHeight);
             float pxRatio = (float)fbWidth / (float)winWidth;
 
-            // Begin NanoVG frame
+            YGNodeStyleSetWidth(m_RootWidget->GetLayoutNode(), (float)winWidth);
+            YGNodeStyleSetHeight(m_RootWidget->GetLayoutNode(), (float)winHeight);
+
+            YGNodeCalculateLayout(m_RootWidget->GetLayoutNode(), (float)winWidth, (float)winHeight, YGDirectionLTR);
+            m_RootWidget->OnLayout();
+
             nvgBeginFrame(m_VG, winWidth, winHeight, pxRatio);
 
-            // Draw a filled rectangle
-            nvgBeginPath(m_VG);
-            nvgRect(m_VG, 100, 100, 200, 150);
-            nvgFillColor(m_VG, nvgRGBA(28, 130, 200, 255));
-            nvgFill(m_VG);
+            m_RootWidget->Draw(m_VG);
 
-            // Draw a circle
-            nvgBeginPath(m_VG);
-            nvgCircle(m_VG, 500, 150, 60);
-            nvgFillColor(m_VG, nvgRGBA(220, 50, 100, 255));
-            nvgFill(m_VG);
-
-            // Draw a rounded rectangle with stroke
-            nvgBeginPath(m_VG);
-            nvgRoundedRect(m_VG, 100, 300, 250, 100, 10);
-            nvgStrokeColor(m_VG, nvgRGBA(255, 200, 50, 255));
-            nvgStrokeWidth(m_VG, 3.0f);
-            nvgStroke(m_VG);
-            nvgFillColor(m_VG, nvgRGBA(50, 50, 70, 200));
-            nvgFill(m_VG);
-
-            // Draw text (using default font)
-            nvgFontSize(m_VG, 40.0f);
-            nvgFontFace(m_VG, "sans");
-            nvgFillColor(m_VG, nvgRGBA(255, 255, 255, 255));
-            nvgText(m_VG, 150, 500, "Hello NanoVG!", NULL);
-
-            // Draw a gradient
-            NVGpaint gradient =
-                nvgLinearGradient(m_VG, 400, 300, 600, 400, nvgRGBA(255, 100, 50, 255), nvgRGBA(50, 200, 255, 255));
-            nvgBeginPath(m_VG);
-            nvgRect(m_VG, 400, 300, 200, 100);
-            nvgFillPaint(m_VG, gradient);
-            nvgFill(m_VG);
-
-            // End NanoVG frame
             nvgEndFrame(m_VG);
 
             glfwSwapBuffers(m_Window);
         }
+    }
+
+    Widget* Application::GetRootWidget() const
+    {
+        return m_RootWidget;
     }
 } // namespace Skoga

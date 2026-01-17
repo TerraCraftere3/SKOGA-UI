@@ -6,6 +6,7 @@ struct NVGcontext;
 namespace Skoga
 {
     struct Config;
+    struct Widget;
 
     class Application
     {
@@ -15,8 +16,12 @@ namespace Skoga
 
         void Run();
 
+        // Root widget access
+        Widget* GetRootWidget() const;
+
     private:
         GLFWwindow* m_Window;
         NVGcontext* m_VG;
+        Widget* m_RootWidget;
     };
 } // namespace Skoga

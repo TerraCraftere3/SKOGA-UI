@@ -4,3 +4,6 @@
 [submodule "Vendor/nanovg"]
 	path = Vendor/nanovg
 	url = https://github.com/memononen/nanovg
+[submodule "Vendor/yoga"]
+	path = Vendor/yoga
+	url = https://github.com/facebook/yoga
