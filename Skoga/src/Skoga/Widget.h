@@ -22,6 +22,7 @@ namespace Skoga
         Widget& operator=(const Widget&) = delete;
 
         // Hierarchy
+        void ClearChildren();
         void AddChild(Ref<Widget> child);
         const std::vector<Ref<Widget>>& GetChildren() const;
 

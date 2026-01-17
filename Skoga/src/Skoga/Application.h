@@ -1,12 +1,14 @@
 #pragma once
 
+#include "Core.h"
+#include "Widget.h"
+
 struct GLFWwindow;
 struct NVGcontext;
 
 namespace Skoga
 {
     struct Config;
-    struct Widget;
 
     class Application
     {
@@ -16,12 +18,11 @@ namespace Skoga
 
         void Run();
 
-        // Root widget access
-        Widget* GetRootWidget() const;
+        void SetLayout(Ref<Widget> layout);
 
     private:
         GLFWwindow* m_Window;
         NVGcontext* m_VG;
-        Widget* m_RootWidget;
+        Ref<Widget> m_RootWidget;
     };
 } // namespace Skoga

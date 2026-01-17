@@ -95,26 +95,33 @@ namespace Skoga
         operator Ref<TextWidget>() { return Build(); }
     };
 
-    // ========== BackgroundBuilder ==========
-    class BackgroundBuilder
+    // ========== Background ==========
+    class Background
     {
     private:
         Color m_Color;
+        float m_CornerRadius = 0.0f;
         std::vector<Ref<Widget>> m_Children;
 
     public:
-        explicit BackgroundBuilder(const Color& color) : m_Color(color) {}
+        explicit Background(const Color& color) : m_Color(color) {}
 
         template <typename... Children>
-        explicit BackgroundBuilder(const Color& color, Children... child) : m_Color(color)
+        explicit Background(const Color& color, Children... child) : m_Color(color)
         {
-            (m_Children.push_back(child), ...);
+            (m_Children.push_back(ToWidget(child)), ...);
+        }
+
+        Background& CornerRadius(float radius)
+        {
+            m_CornerRadius = radius;
+            return *this;
         }
 
         template <typename... Children>
-        BackgroundBuilder& Add(Children... child)
+        Background& Add(Children... child)
         {
-            (m_Children.push_back(child), ...);
+            (m_Children.push_back(ToWidget(child)), ...);
             return *this;
         }
 
@@ -126,6 +133,7 @@ namespace Skoga
             {
                 background->AddChild(child);
             }
+            background->SetCornerRadius(m_CornerRadius);
             return background;
         }
 
@@ -133,7 +141,7 @@ namespace Skoga
     };
 
     // ========== PaddingBuilder ==========
-    class PaddingBuilder
+    class Padding
     {
     private:
         float m_Top;
@@ -143,58 +151,54 @@ namespace Skoga
         std::vector<Ref<Widget>> m_Children;
 
     public:
-        explicit PaddingBuilder(float paddingValue)
-            : m_Top(paddingValue), m_Right(paddingValue), m_Bottom(paddingValue), m_Left(paddingValue)
-        {
-        }
+        explicit Padding(float value) : m_Top(value), m_Right(value), m_Bottom(value), m_Left(value) {}
 
-        PaddingBuilder(float top, float right, float bottom, float left)
+        Padding(float top, float right, float bottom, float left)
             : m_Top(top), m_Right(right), m_Bottom(bottom), m_Left(left)
         {
         }
 
         template <typename... Children>
-        explicit PaddingBuilder(float paddingValue, Children... child)
-            : m_Top(paddingValue), m_Right(paddingValue), m_Bottom(paddingValue), m_Left(paddingValue)
+        explicit Padding(float value, Children... child) : m_Top(value), m_Right(value), m_Bottom(value), m_Left(value)
         {
-            (m_Children.push_back(child), ...);
+            (m_Children.push_back(ToWidget(child)), ...);
         }
 
         template <typename... Children>
-        PaddingBuilder(float top, float right, float bottom, float left, Children... child)
+        Padding(float top, float right, float bottom, float left, Children... child)
             : m_Top(top), m_Right(right), m_Bottom(bottom), m_Left(left)
         {
-            (m_Children.push_back(child), ...);
+            (m_Children.push_back(ToWidget(child)), ...);
         }
 
-        PaddingBuilder& Top(float value)
+        Padding& Top(float value)
         {
             m_Top = value;
             return *this;
         }
 
-        PaddingBuilder& Right(float value)
+        Padding& Right(float value)
         {
             m_Right = value;
             return *this;
         }
 
-        PaddingBuilder& Bottom(float value)
+        Padding& Bottom(float value)
         {
             m_Bottom = value;
             return *this;
         }
 
-        PaddingBuilder& Left(float value)
+        Padding& Left(float value)
         {
             m_Left = value;
             return *this;
         }
 
         template <typename... Children>
-        PaddingBuilder& Add(Children... child)
+        Padding& Add(Children... child)
         {
-            (m_Children.push_back(child), ...);
+            (m_Children.push_back(ToWidget(child)), ...);
             return *this;
         }
 
@@ -232,35 +236,9 @@ namespace Skoga
         return stack;
     }
 
-    // ========== Legacy Background overloads (for backward compatibility) ==========
-    template <typename... Children>
-    inline Ref<BackgroundWidget> Background(const Color& color, Children... child)
-    {
-        auto background = CreateRef<BackgroundWidget>(color);
-        YGNodeStyleSetFlexGrow(background->GetLayoutNode(), 1.0f);
-        AddChildren(background, child...);
-        return background;
-    }
-
     // ========== Text function returns TextBuilder ==========
     inline TextBuilder Text(const char* text)
     {
         return TextBuilder(text);
-    }
-
-    // ========== Legacy Padding overloads (for backward compatibility) ==========
-    template <typename... Children>
-    inline Ref<PaddingWidget> Padding(float top, float right, float bottom, float left, Children... child)
-    {
-        auto padding = CreateRef<PaddingWidget>(top, right, bottom, left);
-        YGNodeStyleSetFlexGrow(padding->GetLayoutNode(), 1.0f);
-        AddChildren(padding, child...);
-        return padding;
-    }
-
-    template <typename... Children>
-    inline Ref<PaddingWidget> Padding(float paddingValue, Children... child)
-    {
-        return Padding(paddingValue, paddingValue, paddingValue, paddingValue, child...);
     }
 } // namespace Skoga

@@ -44,47 +44,36 @@ Skoga::Ref<Skoga::Widget> CreateNestedBackgrounds()
     using namespace Skoga;
 
     // clang-format off
-    auto nestedBackgrounds = Background(Blue_500,
-        Padding(50.0f,
-            Background(
-                Blue_400,
-                Padding(50.0f,
-                    Background(
-                        Blue_300,
-                        Padding(50.0f,
-                            Background(
-                                Blue_200,
-                                Text("Nested Background")
-                                    .FontSize(20.0f)
-                                    .Color(Black)
-                                    .Align(HorizontalAlignment::Center, VerticalAlignment::Middle)
+    auto nestedBackgrounds = 
+    Container(
+    Background(Blue_500,
+            Padding(
+                50.0f,
+                Background(
+                    Blue_400,
+                    Padding(
+                        50.0f,
+                        Background(
+                            Blue_300,
+                            Padding(
+                                50.0f,
+                                Background(
+                                    Blue_200,
+                                    Text("Nested Background")
+                                        .FontSize(20.0f)
+                                        .Color(Black)
+                                        .Align(HorizontalAlignment::Center, VerticalAlignment::Middle)
+                                ).CornerRadius(10.0f)
                             )
-                        )
+                        ).CornerRadius(15.0f)
                     )
-                )
+                ).CornerRadius(20.0f)
             )
         )
     );
     // clang-format on
 
     return nestedBackgrounds;
-}
-
-Skoga::Ref<Skoga::Widget> CreateLayout()
-{
-    using namespace Skoga;
-
-    // clang-format off
-    auto layout = Container(
-        Stack(
-            Row,
-            CreateTextAlignment(),
-            CreateNestedBackgrounds()
-        )
-    );
-    // clang-format on
-
-    return layout;
 }
 
 int main()
@@ -95,8 +84,15 @@ int main()
     config.WindowTitle = "Skoga Widgets Demo";
     Skoga::Application app(&config);
 
-    auto root = app.GetRootWidget();
-    root->AddChild(CreateLayout());
+    // clang-format off
+    app.SetLayout(Skoga::Container(
+        Skoga::Stack(
+            Skoga::Row,
+            CreateTextAlignment(),
+            CreateNestedBackgrounds()
+        )
+    ));
+    // clang-format on
 
     app.Run();
 }

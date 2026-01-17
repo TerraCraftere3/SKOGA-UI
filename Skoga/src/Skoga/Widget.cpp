@@ -15,6 +15,16 @@ namespace Skoga
         YGNodeFree(m_LayoutNode);
     }
 
+    void Widget::ClearChildren()
+    {
+        for (auto& child : m_Children)
+        {
+            child->m_Parent = nullptr;
+            YGNodeRemoveChild(m_LayoutNode, child->m_LayoutNode);
+        }
+        m_Children.clear();
+    }
+
     void Widget::AddChild(Ref<Widget> child)
     {
         child->m_Parent = this;

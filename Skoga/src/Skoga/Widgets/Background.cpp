@@ -11,10 +11,18 @@ namespace Skoga
         m_Color = color;
     }
 
+    void BackgroundWidget::SetCornerRadius(float radius)
+    {
+        m_CornerRadius = radius;
+    }
+
     void BackgroundWidget::DrawSelf(NVGcontext* vg)
     {
         nvgBeginPath(vg);
-        nvgRect(vg, 0, 0, Width(), Height());
+        if (m_CornerRadius > 0.0f)
+            nvgRoundedRect(vg, 0, 0, Width(), Height(), m_CornerRadius);
+        else
+            nvgRect(vg, 0, 0, Width(), Height());
         nvgFillColor(vg, nvgRGBAf(m_Color.R, m_Color.G, m_Color.B, m_Color.A));
         nvgFill(vg);
     }

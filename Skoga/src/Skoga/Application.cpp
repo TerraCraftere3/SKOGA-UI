@@ -69,7 +69,7 @@ namespace Skoga
         LoadFont(FontArial, "C:\\Windows\\Fonts\\arial.ttf");
         LoadFont(FontConsolas, "C:\\Windows\\Fonts\\consola.ttf");
 
-        m_RootWidget = new RootWidget();
+        m_RootWidget = CreateRef<RootWidget>();
 
         YGNodeStyleSetWidth(m_RootWidget->GetLayoutNode(), config->WindowWidth);
         YGNodeStyleSetHeight(m_RootWidget->GetLayoutNode(), config->WindowHeight);
@@ -78,7 +78,6 @@ namespace Skoga
 
     Application::~Application()
     {
-        delete m_RootWidget;
         if (m_VG)
         {
             nvgDeleteGL3(m_VG);
@@ -119,8 +118,8 @@ namespace Skoga
         }
     }
 
-    Widget* Application::GetRootWidget() const
+    void Application::SetLayout(Ref<Widget> layout)
     {
-        return m_RootWidget;
+        m_RootWidget = layout;
     }
 } // namespace Skoga
