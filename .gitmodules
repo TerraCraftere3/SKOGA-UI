@@ -1,3 +1,6 @@
 [submodule "Vendor/Glfw"]
 	path = Vendor/Glfw
 	url = https://github.com/glfw/glfw.git
+[submodule "Vendor/nanovg"]
+	path = Vendor/nanovg
+	url = https://github.com/memononen/nanovg

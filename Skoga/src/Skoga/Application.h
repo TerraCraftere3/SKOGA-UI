@@ -1,6 +1,7 @@
 #pragma once
 
 struct GLFWwindow;
+struct NVGcontext;
 
 namespace Skoga
 {
@@ -16,5 +17,6 @@ namespace Skoga
 
     private:
         GLFWwindow* m_Window;
+        NVGcontext* m_VG;
     };
 } // namespace Skoga

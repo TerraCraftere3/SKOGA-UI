@@ -1,6 +1,7 @@
 file(GLOB_RECURSE SKOGA_SRC CONFIGURE_DEPENDS
     "${CMAKE_CURRENT_SOURCE_DIR}/src/Skoga/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/Skoga/*.c"
+    "${NANOVG_INCLUDE_DIR}/*.c"
 )
 
 add_library(skoga STATIC ${SKOGA_SRC})
@@ -12,4 +13,7 @@ target_include_directories(skoga PUBLIC
 
 # Link internal libraries
 target_link_libraries(skoga PRIVATE glfw glad)
+target_include_directories(skoga PRIVATE
+    "${NANOVG_INCLUDE_DIR}"
+)
 target_compile_definitions(skoga PUBLIC GLM_ENABLE_EXPERIMENTAL)
