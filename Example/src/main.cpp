@@ -15,24 +15,21 @@ Skoga::Ref<Skoga::Widget> CreateTextAlignment()
             Padding(20.0f,
                 Stack(
                     Column,
-                    Text("Top Left (Arial)", 
-                        18.0f, 
-                        Red_500, 
-                        FontArial, 
-                        HorizontalAlignment::Left, 
-                        VerticalAlignment::Top),
-                    Text("Center Center (Consolas)", 
-                        18.0f, 
-                        Green_500, 
-                        FontConsolas, 
-                        HorizontalAlignment::Center, 
-                        VerticalAlignment::Middle),
-                    Text("Bottom Right (Segoe UI)", 
-                        18.0f, 
-                        Blue_500, 
-                        FontSegoeui, 
-                        HorizontalAlignment::Right, 
-                        VerticalAlignment::Bottom)
+                    Text("Top Left (Arial)")
+                        .FontSize(18.0f)
+                        .Color(Red_500)
+                        .Font(FontArial)
+                        .Align(HorizontalAlignment::Left, VerticalAlignment::Top),
+                    Text("Center Center (Consolas)")
+                        .FontSize(18.0f)
+                        .Color(Green_500)
+                        .Font(FontConsolas)
+                        .Align(HorizontalAlignment::Center, VerticalAlignment::Middle),
+                    Text("Bottom Right (Segoe UI)")
+                        .FontSize(18.0f)
+                        .Color(Blue_500)
+                        .Font(FontSegoeui)
+                        .Align(HorizontalAlignment::Right, VerticalAlignment::Bottom)
                 )
             )
         )
@@ -57,7 +54,10 @@ Skoga::Ref<Skoga::Widget> CreateNestedBackgrounds()
                         Padding(50.0f,
                             Background(
                                 Blue_200,
-                                Text("Nested Background", 20.0f, Black, HorizontalAlignment::Center, VerticalAlignment::Middle)
+                                Text("Nested Background")
+                                    .FontSize(20.0f)
+                                    .Color(Black)
+                                    .Align(HorizontalAlignment::Center, VerticalAlignment::Middle)
                             )
                         )
                     )
