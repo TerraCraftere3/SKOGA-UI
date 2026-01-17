@@ -8,7 +8,7 @@ namespace Skoga
         : m_Text(text), m_FontSize(fontSize)
     {
         // Set minimum size for the text widget
-        YGNodeStyleSetHeight(GetLayoutNode(), fontSize * 1.5f);
+        YGNodeStyleSetMinHeight(GetLayoutNode(), fontSize * 1.5f);
         YGNodeStyleSetMinWidth(GetLayoutNode(), 50.0f);
     }
 
@@ -20,7 +20,17 @@ namespace Skoga
     void TextWidget::SetFontSize(float fontSize)
     {
         m_FontSize = fontSize;
-        YGNodeStyleSetHeight(GetLayoutNode(), fontSize * 1.5f);
+        YGNodeStyleSetMinHeight(GetLayoutNode(), fontSize * 1.5f);
+    }
+
+    void TextWidget::SetHorizontalAlignment(HorizontalAlignment alignment)
+    {
+        m_HorizontalAlignment = alignment;
+    }
+
+    void TextWidget::SetVerticalAlignment(VerticalAlignment alignment)
+    {
+        m_VerticalAlignment = alignment;
     }
 
     void TextWidget::DrawSelf(NVGcontext* vg)
@@ -28,7 +38,62 @@ namespace Skoga
         nvgFontSize(vg, m_FontSize);
         nvgFontFace(vg, "sans");
         nvgFillColor(vg, nvgRGBA(255, 255, 255, 255));
-        nvgTextAlign(vg, NVG_ALIGN_LEFT | NVG_ALIGN_TOP);
-        nvgText(vg, 0, 0, m_Text, nullptr);
+
+        // Convert alignment enums to NanoVG flags
+        int hAlign = NVG_ALIGN_LEFT;
+        switch (m_HorizontalAlignment)
+        {
+            case HorizontalAlignment::Left:
+                hAlign = NVG_ALIGN_LEFT;
+                break;
+            case HorizontalAlignment::Center:
+                hAlign = NVG_ALIGN_CENTER;
+                break;
+            case HorizontalAlignment::Right:
+                hAlign = NVG_ALIGN_RIGHT;
+                break;
+        }
+
+        int vAlign = NVG_ALIGN_TOP;
+        switch (m_VerticalAlignment)
+        {
+            case VerticalAlignment::Top:
+                vAlign = NVG_ALIGN_TOP;
+                break;
+            case VerticalAlignment::Middle:
+                vAlign = NVG_ALIGN_MIDDLE;
+                break;
+            case VerticalAlignment::Bottom:
+                vAlign = NVG_ALIGN_BOTTOM;
+                break;
+        }
+
+        nvgTextAlign(vg, hAlign | vAlign);
+
+        // Calculate position based on alignment
+        float x = 0.0f;
+        float y = 0.0f;
+        float width = YGNodeLayoutGetWidth(GetLayoutNode());
+        float height = YGNodeLayoutGetHeight(GetLayoutNode());
+
+        if (m_HorizontalAlignment == HorizontalAlignment::Center)
+        {
+            x = width * 0.5f;
+        }
+        else if (m_HorizontalAlignment == HorizontalAlignment::Right)
+        {
+            x = width;
+        }
+
+        if (m_VerticalAlignment == VerticalAlignment::Middle)
+        {
+            y = height * 0.5f;
+        }
+        else if (m_VerticalAlignment == VerticalAlignment::Bottom)
+        {
+            y = height;
+        }
+
+        nvgText(vg, x, y, m_Text, nullptr);
     }
 } // namespace Skoga

@@ -50,10 +50,14 @@ namespace Skoga
     }
 
     // Text builder
-    inline Ref<TextWidget> Text(const char* text, float fontSize = 16.0f)
+    inline Ref<TextWidget> Text(const char* text, float fontSize = 16.0f,
+                                HorizontalAlignment hAlign = HorizontalAlignment::Left,
+                                VerticalAlignment vAlign = VerticalAlignment::Top)
     {
         auto textWidget = CreateRef<TextWidget>(text, fontSize);
-        YGNodeStyleSetFlexGrow(textWidget->GetLayoutNode(), 0.0f);
+        textWidget->SetHorizontalAlignment(hAlign);
+        textWidget->SetVerticalAlignment(vAlign);
+        YGNodeStyleSetFlexGrow(textWidget->GetLayoutNode(), 1.0f);
         return textWidget;
     }
 } // namespace Skoga
