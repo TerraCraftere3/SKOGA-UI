@@ -62,6 +62,17 @@ namespace Skoga
         return textWidget;
     }
 
+    inline Ref<TextWidget> Text(const char* text, float fontSize = 16.0f, const char* fontName = FontSegoeui,
+                                HorizontalAlignment hAlign = HorizontalAlignment::Left,
+                                VerticalAlignment vAlign = VerticalAlignment::Top)
+    {
+        auto textWidget = CreateRef<TextWidget>(text, fontSize, fontName);
+        textWidget->SetHorizontalAlignment(hAlign);
+        textWidget->SetVerticalAlignment(vAlign);
+        YGNodeStyleSetFlexGrow(textWidget->GetLayoutNode(), 1.0f);
+        return textWidget;
+    }
+
     // Padding builder
     template <typename... Children>
     inline Ref<PaddingWidget> Padding(float top, float right, float bottom, float left, Children... child)

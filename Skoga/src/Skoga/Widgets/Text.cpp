@@ -4,7 +4,8 @@
 
 namespace Skoga
 {
-    TextWidget::TextWidget(const char* text, float fontSize) : m_Text(text), m_FontSize(fontSize)
+    TextWidget::TextWidget(const char* text, float fontSize, const char* fontName)
+        : m_Text(text), m_FontSize(fontSize), m_FontName(fontName)
     {
         // Set minimum size for the text widget
         YGNodeStyleSetMinHeight(GetLayoutNode(), fontSize * 1.5f);
@@ -22,6 +23,11 @@ namespace Skoga
         YGNodeStyleSetMinHeight(GetLayoutNode(), fontSize * 1.5f);
     }
 
+    void TextWidget::SetFontName(const char* fontName)
+    {
+        m_FontName = fontName;
+    }
+
     void TextWidget::SetHorizontalAlignment(HorizontalAlignment alignment)
     {
         m_HorizontalAlignment = alignment;
@@ -35,7 +41,7 @@ namespace Skoga
     void TextWidget::DrawSelf(NVGcontext* vg)
     {
         nvgFontSize(vg, m_FontSize);
-        nvgFontFace(vg, "sans");
+        nvgFontFace(vg, m_FontName);
         nvgFillColor(vg, nvgRGBA(255, 255, 255, 255));
 
         // Convert alignment enums to NanoVG flags

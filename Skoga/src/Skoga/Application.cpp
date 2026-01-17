@@ -1,5 +1,6 @@
 #include "Application.h"
 #include "Config.h"
+#include "Fonts.h"
 #include "Widget.h"
 
 // clang-format off
@@ -21,6 +22,8 @@ namespace Skoga
     protected:
         void DrawSelf(NVGcontext* vg) override {}
     };
+
+    NVGcontext* g_VGContext = nullptr;
 
     Application::Application(Config* config)
     {
@@ -52,6 +55,7 @@ namespace Skoga
 
         // Initialize NanoVG
         m_VG = nvgCreateGL3(NVG_ANTIALIAS | NVG_STENCIL_STROKES);
+        g_VGContext = m_VG;
         if (!m_VG)
         {
             glfwDestroyWindow(m_Window);
@@ -61,17 +65,9 @@ namespace Skoga
         }
 
         // Load default Windows font
-        int font = nvgCreateFont(m_VG, "sans", "C:\\Windows\\Fonts\\segoeui.ttf");
-        if (font == -1)
-        {
-            // Fallback to Arial if Segoe UI is not available
-            font = nvgCreateFont(m_VG, "sans", "C:\\Windows\\Fonts\\arial.ttf");
-            if (font == -1)
-            {
-                // Last resort - try Consolas
-                font = nvgCreateFont(m_VG, "sans", "C:\\Windows\\Fonts\\consola.ttf");
-            }
-        }
+        LoadFont(FontSegoeui, "C:\\Windows\\Fonts\\segoeui.ttf");
+        LoadFont(FontArial, "C:\\Windows\\Fonts\\arial.ttf");
+        LoadFont(FontConsolas, "C:\\Windows\\Fonts\\consola.ttf");
 
         m_RootWidget = new RootWidget();
 
