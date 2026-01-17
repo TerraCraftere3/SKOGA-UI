@@ -11,25 +11,25 @@ Skoga::Ref<Skoga::Widget> CreateTextAlignment()
 
     // clang-format off
     auto alignmentContainer = Container(
-        Background(Color(0.1f, 0.1f, 0.1f, 1.0f),
+        Background(Gray_900,
             Padding(20.0f,
                 Stack(
                     Column,
                     Text("Top Left (Arial)", 
                         18.0f, 
-                        Color(1.0f, 0.0f, 0.0f), 
+                        Red_500, 
                         FontArial, 
                         HorizontalAlignment::Left, 
                         VerticalAlignment::Top),
                     Text("Center Center (Consolas)", 
                         18.0f, 
-                        Color(0.0f, 1.0f, 0.0f), 
+                        Green_500, 
                         FontConsolas, 
                         HorizontalAlignment::Center, 
                         VerticalAlignment::Middle),
                     Text("Bottom Right (Segoe UI)", 
                         18.0f, 
-                        Color(0.0f, 0.0f, 1.0f), 
+                        Blue_500, 
                         FontSegoeui, 
                         HorizontalAlignment::Right, 
                         VerticalAlignment::Bottom)
@@ -47,17 +47,17 @@ Skoga::Ref<Skoga::Widget> CreateNestedBackgrounds()
     using namespace Skoga;
 
     // clang-format off
-    auto nestedBackgrounds = Background(Color(0.2f, 0.2f, 0.4f, 1.0f),
+    auto nestedBackgrounds = Background(Blue_500,
         Padding(50.0f,
             Background(
-                Color(0.4f, 0.4f, 0.6f, 1.0f),
+                Blue_400,
                 Padding(50.0f,
                     Background(
-                        Color(0.6f, 0.6f, 0.8f, 1.0f),
+                        Blue_300,
                         Padding(50.0f,
                             Background(
-                                Color(0.8f, 0.8f, 1.0f, 1.0f),
-                                Text("Nested Background", 20.0f, Color(0.0f, 0.0f, 0.0f), HorizontalAlignment::Center, VerticalAlignment::Middle)
+                                Blue_200,
+                                Text("Nested Background", 20.0f, Black, HorizontalAlignment::Center, VerticalAlignment::Middle)
                             )
                         )
                     )
