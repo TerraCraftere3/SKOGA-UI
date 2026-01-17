@@ -1,5 +1,7 @@
 #include "Application.h"
 #include "Config.h"
+#include "DebugOverlay.h"
+#include "DebugSidebar.h"
 #include "Fonts.h"
 #include "Widget.h"
 
@@ -27,7 +29,7 @@ namespace Skoga
     static Widget* g_HoveredWidget = nullptr;
     static bool g_LastMouseButtonState = false;
     static bool g_ShowDebug = false;
-    static bool g_LastF12State = false;
+    static bool g_LastF6State = false;
 
     Application::Application(Config* config)
     {
@@ -74,10 +76,23 @@ namespace Skoga
         LoadFont(FontConsolas, "C:\\Windows\\Fonts\\consola.ttf");
 
         m_RootWidget = CreateRef<RootWidget>();
-
         YGNodeStyleSetWidth(m_RootWidget->GetLayoutNode(), config->WindowWidth);
         YGNodeStyleSetHeight(m_RootWidget->GetLayoutNode(), config->WindowHeight);
-        YGNodeStyleSetFlexDirection(m_RootWidget->GetLayoutNode(), YGFlexDirectionColumn);
+        YGNodeStyleSetFlexDirection(m_RootWidget->GetLayoutNode(), YGFlexDirectionRow);
+
+        // Create main container with horizontal layout (content + debug sidebar)
+        m_MainContainer = CreateRef<RootWidget>();
+        YGNodeStyleSetFlexDirection(m_MainContainer->GetLayoutNode(), YGFlexDirectionRow);
+        YGNodeStyleSetFlexGrow(m_MainContainer->GetLayoutNode(), 1.0f);
+
+        // Create debug sidebar
+        m_DebugSidebar = CreateRef<DebugSidebar>();
+
+        // Create user widget
+        m_UserWidget = CreateRef<RootWidget>();
+        YGNodeStyleSetFlexGrow(m_UserWidget->GetLayoutNode(), 1.0f);
+
+        m_RootWidget->AddChild(m_MainContainer);
     }
 
     Application::~Application()
@@ -121,20 +136,42 @@ namespace Skoga
             bool currentMouseButtonState = glfwGetMouseButton(m_Window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS;
             if (currentMouseButtonState && !g_LastMouseButtonState)
             {
-                if (hitWidget)
+                if (m_ShowDebugPanel && hitWidget == m_DebugSidebar.get())
+                {
+                    // Handle click on debug sidebar
+                    float relativeX = static_cast<float>(mouseX) - m_DebugSidebar->X();
+                    float relativeY = static_cast<float>(mouseY) - m_DebugSidebar->Y();
+                    m_DebugSidebar->HandleClick(relativeX, relativeY);
+                }
+                else if (hitWidget)
                 {
                     hitWidget->TriggerClick();
                 }
             }
             g_LastMouseButtonState = currentMouseButtonState;
 
-            // Toggle debug draw on F12 key press (edge-triggered)
-            bool currentF12State = glfwGetKey(m_Window, GLFW_KEY_F6) == GLFW_PRESS;
-            if (currentF12State && !g_LastF12State)
+#ifdef SKOGA_DEBUG
+            // Toggle debug panel on F6 key press (edge-triggered)
+            bool currentF6State = glfwGetKey(m_Window, GLFW_KEY_F6) == GLFW_PRESS;
+            if (currentF6State && !g_LastF6State)
             {
-                g_ShowDebug = !g_ShowDebug;
+                m_ShowDebugPanel = !m_ShowDebugPanel;
+
+                // Update layout based on debug panel state
+                if (m_ShowDebugPanel)
+                {
+                    m_MainContainer->ClearChildren();
+                    m_MainContainer->AddChild(m_UserWidget);
+                    m_MainContainer->AddChild(m_DebugSidebar);
+                }
+                else
+                {
+                    m_MainContainer->ClearChildren();
+                    m_MainContainer->AddChild(m_UserWidget);
+                }
             }
-            g_LastF12State = currentF12State;
+            g_LastF6State = currentF6State;
+#endif
 
             int fbWidth = 0, fbHeight = 0;
             glfwGetFramebufferSize(m_Window, &fbWidth, &fbHeight);
@@ -154,14 +191,19 @@ namespace Skoga
 
             nvgBeginFrame(m_VG, winWidth, winHeight, pxRatio);
 
-            if (g_ShowDebug)
+#ifdef SKOGA_DEBUG
+            if (m_ShowDebugPanel)
             {
-                m_RootWidget->DrawDebug(m_VG);
+                m_UserWidget->DrawDebug(m_VG);
+                m_DebugSidebar->Draw(m_VG);
             }
             else
             {
                 m_RootWidget->Draw(m_VG);
             }
+#else
+            m_RootWidget->Draw(m_VG);
+#endif
 
             nvgEndFrame(m_VG);
 
@@ -171,6 +213,8 @@ namespace Skoga
 
     void Application::SetLayout(Ref<Widget> layout)
     {
-        m_RootWidget = layout;
+        m_UserWidget = layout;
+        m_MainContainer->ClearChildren();
+        m_MainContainer->AddChild(m_UserWidget);
     }
 } // namespace Skoga

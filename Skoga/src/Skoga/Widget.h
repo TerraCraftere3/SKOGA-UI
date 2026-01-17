@@ -54,15 +54,15 @@ namespace Skoga
         // Check if point is inside this widget's bounds
         bool IsPointInside(float x, float y) const;
 
-    protected:
-        // Override this to draw the widget itself
-        virtual void DrawSelf(NVGcontext* vg) = 0;
-
-        // Layout helpers
+        // Layout accessors
         float X() const;
         float Y() const;
         float Width() const;
         float Height() const;
+
+    protected:
+        // Override this to draw the widget itself
+        virtual void DrawSelf(NVGcontext* vg) = 0;
 
     private:
         Widget* m_Parent = nullptr;
