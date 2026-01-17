@@ -1,8 +1,8 @@
 #include "Layout.h"
 
-namespace Skoga{
-    LayoutWidget::LayoutWidget(LayoutDirection direction)
-        : Widget()
+namespace Skoga
+{
+    LayoutWidget::LayoutWidget(LayoutDirection direction) : Widget()
     {
         SetDirection(direction);
     }
@@ -19,7 +19,5 @@ namespace Skoga{
         }
     }
 
-    void LayoutWidget::DrawSelf(NVGcontext* vg)
-    {
-    }
-}
+    void LayoutWidget::DrawSelf(NVGcontext* vg) {}
+} // namespace Skoga

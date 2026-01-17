@@ -2,11 +2,7 @@
 
 namespace Skoga
 {
-    ContainerWidget::ContainerWidget()
-    {
-    }
+    ContainerWidget::ContainerWidget() {}
 
-    void ContainerWidget::DrawSelf(NVGcontext* vg)
-    {
-    }
+    void ContainerWidget::DrawSelf(NVGcontext* vg) {}
 } // namespace Skoga

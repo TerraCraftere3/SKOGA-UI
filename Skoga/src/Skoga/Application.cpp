@@ -60,6 +60,19 @@ namespace Skoga
             return;
         }
 
+        // Load default Windows font
+        int font = nvgCreateFont(m_VG, "sans", "C:\\Windows\\Fonts\\segoeui.ttf");
+        if (font == -1)
+        {
+            // Fallback to Arial if Segoe UI is not available
+            font = nvgCreateFont(m_VG, "sans", "C:\\Windows\\Fonts\\arial.ttf");
+            if (font == -1)
+            {
+                // Last resort - try Consolas
+                font = nvgCreateFont(m_VG, "sans", "C:\\Windows\\Fonts\\consola.ttf");
+            }
+        }
+
         m_RootWidget = new RootWidget();
 
         YGNodeStyleSetWidth(m_RootWidget->GetLayoutNode(), config->WindowWidth);

@@ -4,10 +4,7 @@
 
 namespace Skoga
 {
-    BackgroundWidget::BackgroundWidget(float r, float g, float b, float a)
-        : m_R(r), m_G(g), m_B(b), m_A(a)
-    {
-    }
+    BackgroundWidget::BackgroundWidget(float r, float g, float b, float a) : m_R(r), m_G(g), m_B(b), m_A(a) {}
 
     void BackgroundWidget::SetColor(float r, float g, float b, float a)
     {
@@ -20,7 +17,7 @@ namespace Skoga
     void BackgroundWidget::DrawSelf(NVGcontext* vg)
     {
         nvgBeginPath(vg);
-        nvgRect(vg, X(), Y(), Width(), Height());
+        nvgRect(vg, 0, 0, Width(), Height());
         nvgFillColor(vg, nvgRGBAf(m_R, m_G, m_B, m_A));
         nvgFill(vg);
     }

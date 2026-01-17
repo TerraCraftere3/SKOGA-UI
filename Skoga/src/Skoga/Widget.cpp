@@ -1,4 +1,5 @@
 #include "Widget.h"
+#include <nanovg.h>
 
 namespace Skoga
 {
@@ -45,11 +46,16 @@ namespace Skoga
     }
 
     void Widget::Draw(NVGcontext* vg)
-    {   
+    {
+        nvgSave(vg);
+        nvgTranslate(vg, X(), Y());
+
         DrawSelf(vg);
 
         for (auto& child : m_Children)
             child->Draw(vg);
+
+        nvgRestore(vg);
     }
 
     float Widget::X() const
