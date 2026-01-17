@@ -1,2 +1,2 @@
-# OpenGL-Template
-An OpenGL Template containing GLFW, Glad and ImGui
+# Skoga UI
+A UI Renderer that uses Skia for Rendering and Yoga for Layouts
