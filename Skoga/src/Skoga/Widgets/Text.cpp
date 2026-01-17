@@ -4,8 +4,7 @@
 
 namespace Skoga
 {
-    TextWidget::TextWidget(const char* text, float fontSize)
-        : m_Text(text), m_FontSize(fontSize)
+    TextWidget::TextWidget(const char* text, float fontSize) : m_Text(text), m_FontSize(fontSize)
     {
         // Set minimum size for the text widget
         YGNodeStyleSetMinHeight(GetLayoutNode(), fontSize * 1.5f);

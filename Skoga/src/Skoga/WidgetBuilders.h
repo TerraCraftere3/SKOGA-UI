@@ -5,6 +5,7 @@
 #include "Skoga/Widgets/Background.h"
 #include "Skoga/Widgets/Container.h"
 #include "Skoga/Widgets/Layout.h"
+#include "Skoga/Widgets/Padding.h"
 #include "Skoga/Widgets/Text.h"
 
 #include <yoga/Yoga.h>
@@ -59,5 +60,21 @@ namespace Skoga
         textWidget->SetVerticalAlignment(vAlign);
         YGNodeStyleSetFlexGrow(textWidget->GetLayoutNode(), 1.0f);
         return textWidget;
+    }
+
+    // Padding builder
+    template <typename... Children>
+    inline Ref<PaddingWidget> Padding(float top, float right, float bottom, float left, Children... child)
+    {
+        auto padding = CreateRef<PaddingWidget>(top, right, bottom, left);
+        YGNodeStyleSetFlexGrow(padding->GetLayoutNode(), 1.0f);
+        AddChildren(padding, child...);
+        return padding;
+    }
+
+    template <typename... Children>
+    inline Ref<PaddingWidget> Padding(float paddingValue, Children... child)
+    {
+        return Padding(paddingValue, paddingValue, paddingValue, paddingValue, child...);
     }
 } // namespace Skoga
