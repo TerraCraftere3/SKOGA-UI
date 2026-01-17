@@ -16,4 +16,6 @@ target_link_libraries(skoga PUBLIC glfw glad yogacore)
 target_include_directories(skoga PUBLIC
     "${NANOVG_INCLUDE_DIR}"
 )
-target_compile_definitions(skoga PUBLIC GLM_ENABLE_EXPERIMENTAL)
+target_compile_definitions(skoga PUBLIC
+    $<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:SKOGA_DEBUG>
+)

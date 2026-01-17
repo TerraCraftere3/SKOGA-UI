@@ -3,6 +3,7 @@
 #include "Skoga/Core.h"
 
 #include <yoga/Yoga.h>
+#include <functional>
 #include <memory>
 #include <vector>
 
@@ -14,6 +15,9 @@ namespace Skoga
     class Widget
     {
     public:
+        using OnClickCallback = std::function<void()>;
+        using OnHoverCallback = std::function<void(bool)>;
+
         Widget();
         virtual ~Widget();
 
@@ -36,6 +40,19 @@ namespace Skoga
 
         // Rendering entry point
         void Draw(NVGcontext* vg);
+        void DrawDebug(NVGcontext* vg);
+
+        // Event handlers
+        void SetOnClick(OnClickCallback callback);
+        void SetOnHover(OnHoverCallback callback);
+        void TriggerClick();
+        void TriggerHover(bool isHovering);
+
+        // Hit testing - returns the deepest widget at the given position
+        Widget* HitTest(float x, float y);
+
+        // Check if point is inside this widget's bounds
+        bool IsPointInside(float x, float y) const;
 
     protected:
         // Override this to draw the widget itself
@@ -52,6 +69,8 @@ namespace Skoga
         std::vector<Ref<Widget>> m_Children;
 
         YGNodeRef m_LayoutNode = nullptr;
+        OnClickCallback m_OnClick;
+        OnHoverCallback m_OnHover;
     };
 
 } // namespace Skoga

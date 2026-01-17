@@ -10,7 +10,7 @@ Skoga::Ref<Skoga::Widget> CreateTextAlignment()
     using namespace Skoga;
 
     // clang-format off
-    auto alignmentContainer = Container(
+    return Container(
         Background(Gray_900,
             Padding(20.0f,
                 Stack(
@@ -35,8 +35,6 @@ Skoga::Ref<Skoga::Widget> CreateTextAlignment()
         )
     );
     // clang-format on
-
-    return alignmentContainer;
 }
 
 Skoga::Ref<Skoga::Widget> CreateNestedBackgrounds()
@@ -44,25 +42,26 @@ Skoga::Ref<Skoga::Widget> CreateNestedBackgrounds()
     using namespace Skoga;
 
     // clang-format off
-    auto nestedBackgrounds = 
-    Container(
-    Background(Blue_500,
-            Padding(
-                50.0f,
-                Background(
-                    Blue_400,
-                    Padding(
-                        50.0f,
-                        Background(
-                            Blue_300,
-                            Padding(
-                                50.0f,
-                                Background(
-                                    Blue_200,
+    return Container(
+        Background(Blue_500,
+            Padding(50.0f,
+                Background(Blue_400,
+                    Padding(50.0f,
+                        Background(Blue_300,
+                            Padding(50.0f,
+                                Background(Blue_200,
                                     Text("Nested Background")
                                         .FontSize(20.0f)
                                         .Color(Black)
-                                        .Align(HorizontalAlignment::Center, VerticalAlignment::Middle)
+                                        .Align(HorizontalAlignment::Center, VerticalAlignment::Middle),
+                                    Button(Blue_700,
+                                        Text("Click Me")
+                                            .FontSize(14.0f)
+                                            .Color(Black)
+                                            .Align(HorizontalAlignment::Center, VerticalAlignment::Middle))
+                                        .Padding(10.0f)
+                                        .CornerRadius(5.0f)
+                                        .OnClick([]() { printf("Button Clicked!\n"); })
                                 ).CornerRadius(10.0f)
                             )
                         ).CornerRadius(15.0f)
@@ -72,14 +71,12 @@ Skoga::Ref<Skoga::Widget> CreateNestedBackgrounds()
         )
     );
     // clang-format on
-
-    return nestedBackgrounds;
 }
 
 int main()
 {
     Skoga::Config config;
-    config.WindowWidth = 1024;
+    config.WindowWidth = 1824;
     config.WindowHeight = 768;
     config.WindowTitle = "Skoga Widgets Demo";
     Skoga::Application app(&config);

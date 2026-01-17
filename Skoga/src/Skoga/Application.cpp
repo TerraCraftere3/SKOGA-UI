@@ -24,6 +24,10 @@ namespace Skoga
     };
 
     NVGcontext* g_VGContext = nullptr;
+    static Widget* g_HoveredWidget = nullptr;
+    static bool g_LastMouseButtonState = false;
+    static bool g_ShowDebug = false;
+    static bool g_LastF12State = false;
 
     Application::Application(Config* config)
     {
@@ -92,6 +96,46 @@ namespace Skoga
         {
             glfwPollEvents();
 
+            // Handle mouse input
+            double mouseX, mouseY;
+            glfwGetCursorPos(m_Window, &mouseX, &mouseY);
+
+            // Perform hit testing
+            Widget* hitWidget = m_RootWidget->HitTest(static_cast<float>(mouseX), static_cast<float>(mouseY));
+
+            // Handle hover state changes
+            if (hitWidget != g_HoveredWidget)
+            {
+                if (g_HoveredWidget)
+                {
+                    g_HoveredWidget->TriggerHover(false);
+                }
+                g_HoveredWidget = hitWidget;
+                if (g_HoveredWidget)
+                {
+                    g_HoveredWidget->TriggerHover(true);
+                }
+            }
+
+            // Handle mouse clicks (on state change from released to pressed)
+            bool currentMouseButtonState = glfwGetMouseButton(m_Window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS;
+            if (currentMouseButtonState && !g_LastMouseButtonState)
+            {
+                if (hitWidget)
+                {
+                    hitWidget->TriggerClick();
+                }
+            }
+            g_LastMouseButtonState = currentMouseButtonState;
+
+            // Toggle debug draw on F12 key press (edge-triggered)
+            bool currentF12State = glfwGetKey(m_Window, GLFW_KEY_F6) == GLFW_PRESS;
+            if (currentF12State && !g_LastF12State)
+            {
+                g_ShowDebug = !g_ShowDebug;
+            }
+            g_LastF12State = currentF12State;
+
             int fbWidth = 0, fbHeight = 0;
             glfwGetFramebufferSize(m_Window, &fbWidth, &fbHeight);
             glViewport(0, 0, fbWidth, fbHeight);
@@ -110,7 +154,14 @@ namespace Skoga
 
             nvgBeginFrame(m_VG, winWidth, winHeight, pxRatio);
 
-            m_RootWidget->Draw(m_VG);
+            if (g_ShowDebug)
+            {
+                m_RootWidget->DrawDebug(m_VG);
+            }
+            else
+            {
+                m_RootWidget->Draw(m_VG);
+            }
 
             nvgEndFrame(m_VG);
 

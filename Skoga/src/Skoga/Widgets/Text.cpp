@@ -28,6 +28,11 @@ namespace Skoga
         m_FontName = fontName;
     }
 
+    void TextWidget::SetColor(const Color& color)
+    {
+        m_Color = color;
+    }
+
     void TextWidget::SetHorizontalAlignment(HorizontalAlignment alignment)
     {
         m_HorizontalAlignment = alignment;

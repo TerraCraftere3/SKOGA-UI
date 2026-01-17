@@ -3,6 +3,7 @@
 #include "Skoga/Core.h"
 #include "Skoga/Widget.h"
 #include "Skoga/Widgets/Background.h"
+#include "Skoga/Widgets/Button.h"
 #include "Skoga/Widgets/Container.h"
 #include "Skoga/Widgets/Layout.h"
 #include "Skoga/Widgets/Padding.h"
@@ -138,6 +139,94 @@ namespace Skoga
         }
 
         operator Ref<BackgroundWidget>() { return Build(); }
+    };
+
+    // ========== Button ==========
+    class Button
+    {
+    private:
+        Color m_Color;
+        Color m_HoverColor;
+        float m_CornerRadius = 4.0f;
+        float m_PaddingTop = 8.0f;
+        float m_PaddingRight = 12.0f;
+        float m_PaddingBottom = 8.0f;
+        float m_PaddingLeft = 12.0f;
+        std::vector<Ref<Widget>> m_Children;
+        Widget::OnClickCallback m_OnClick;
+
+    public:
+        explicit Button(const Color& color) : m_Color(color)
+        {
+            // Auto-generate hover color (darker)
+            m_HoverColor = Color(color.R * 0.85f, color.G * 0.85f, color.B * 0.85f, color.A);
+        }
+
+        template <typename... Children>
+        explicit Button(const Color& color, Children... child) : m_Color(color)
+        {
+            m_HoverColor = Color(color.R * 0.85f, color.G * 0.85f, color.B * 0.85f, color.A);
+            (m_Children.push_back(ToWidget(child)), ...);
+        }
+
+        Button& HoverColor(const Color& color)
+        {
+            m_HoverColor = color;
+            return *this;
+        }
+
+        Button& CornerRadius(float radius)
+        {
+            m_CornerRadius = radius;
+            return *this;
+        }
+
+        Button& Padding(float value)
+        {
+            m_PaddingTop = m_PaddingRight = m_PaddingBottom = m_PaddingLeft = value;
+            return *this;
+        }
+
+        Button& Padding(float top, float right, float bottom, float left)
+        {
+            m_PaddingTop = top;
+            m_PaddingRight = right;
+            m_PaddingBottom = bottom;
+            m_PaddingLeft = left;
+            return *this;
+        }
+
+        Button& OnClick(Widget::OnClickCallback callback)
+        {
+            m_OnClick = callback;
+            return *this;
+        }
+
+        template <typename... Children>
+        Button& Add(Children... child)
+        {
+            (m_Children.push_back(ToWidget(child)), ...);
+            return *this;
+        }
+
+        Ref<ButtonWidget> Build()
+        {
+            auto button = CreateRef<ButtonWidget>(m_Color);
+            button->SetHoverColor(m_HoverColor);
+            button->SetPadding(m_PaddingTop, m_PaddingRight, m_PaddingBottom, m_PaddingLeft);
+            button->SetCornerRadius(m_CornerRadius);
+            if (m_OnClick)
+            {
+                button->SetOnClick(m_OnClick);
+            }
+            for (auto& child : m_Children)
+            {
+                button->AddChild(child);
+            }
+            return button;
+        }
+
+        operator Ref<ButtonWidget>() { return Build(); }
     };
 
     // ========== PaddingBuilder ==========

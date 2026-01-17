@@ -147,4 +147,8 @@ namespace Skoga
     constexpr Color Teal_100 = Color(0.89f, 1.0f, 0.99f);
     constexpr Color Teal = Teal_500;
 
+    // Converts a wavelength in nanometers (approximately 380-780 nm)
+    // to an sRGB color. Values outside the range will be clamped.
+    Color WavelengthToColor(float wavelengthNm);
+
 } // namespace Skoga
