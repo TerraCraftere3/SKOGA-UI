@@ -69,6 +69,7 @@ namespace Skoga
         nvgRestore(vg);
     }
 
+#ifdef SKOGA_DEBUG
     void Widget::DrawDebug(NVGcontext* vg)
     {
         nvgSave(vg);
@@ -99,6 +100,7 @@ namespace Skoga
 
         nvgRestore(vg);
     }
+#endif
 
     float Widget::X() const
     {

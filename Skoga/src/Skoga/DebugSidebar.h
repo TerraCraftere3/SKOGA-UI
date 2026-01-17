@@ -1,8 +1,9 @@
 #pragma once
 
+#ifdef SKOGA_DEBUG
+#include "Skoga/Color.h"
 #include "Skoga/Core.h"
 #include "Skoga/Widget.h"
-#include "Skoga/Color.h"
 
 namespace Skoga
 {
@@ -11,15 +12,14 @@ namespace Skoga
     public:
         DebugSidebar();
 
-        void HandleClick(float relativeX, float relativeY);
+        void Update();
 
     protected:
         void DrawSelf(NVGcontext* vg) override;
 
     private:
         static const float SIDEBAR_WIDTH;
-        static const float TOGGLE_HEIGHT;
         static const float PADDING;
-        static const float ITEM_SPACING;
     };
 } // namespace Skoga
+#endif

@@ -40,7 +40,9 @@ namespace Skoga
 
         // Rendering entry point
         void Draw(NVGcontext* vg);
+#ifdef SKOGA_DEBUG
         void DrawDebug(NVGcontext* vg);
+#endif
 
         // Event handlers
         void SetOnClick(OnClickCallback callback);

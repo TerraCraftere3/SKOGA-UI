@@ -1,6 +1,5 @@
 #include "Application.h"
 #include "Config.h"
-#include "DebugOverlay.h"
 #include "DebugSidebar.h"
 #include "Fonts.h"
 #include "Widget.h"
@@ -30,9 +29,12 @@ namespace Skoga
     static bool g_LastMouseButtonState = false;
     static bool g_ShowDebug = false;
     static bool g_LastF6State = false;
+    static Application* g_ApplicationInstance = nullptr;
 
     Application::Application(Config* config)
     {
+        g_ApplicationInstance = this;
+
         if (!glfwInit())
         {
         }
@@ -86,7 +88,9 @@ namespace Skoga
         YGNodeStyleSetFlexGrow(m_MainContainer->GetLayoutNode(), 1.0f);
 
         // Create debug sidebar
+#ifdef SKOGA_DEBUG
         m_DebugSidebar = CreateRef<DebugSidebar>();
+#endif
 
         // Create user widget
         m_UserWidget = CreateRef<RootWidget>();
@@ -103,12 +107,16 @@ namespace Skoga
         }
         glfwDestroyWindow(m_Window);
         glfwTerminate();
+
+        if (g_ApplicationInstance == this)
+            g_ApplicationInstance = nullptr;
     }
 
     void Application::Run()
     {
         while (!glfwWindowShouldClose(m_Window))
         {
+            ExecuteMainThreadQueue();
             glfwPollEvents();
 
             // Handle mouse input
@@ -136,14 +144,7 @@ namespace Skoga
             bool currentMouseButtonState = glfwGetMouseButton(m_Window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS;
             if (currentMouseButtonState && !g_LastMouseButtonState)
             {
-                if (m_ShowDebugPanel && hitWidget == m_DebugSidebar.get())
-                {
-                    // Handle click on debug sidebar
-                    float relativeX = static_cast<float>(mouseX) - m_DebugSidebar->X();
-                    float relativeY = static_cast<float>(mouseY) - m_DebugSidebar->Y();
-                    m_DebugSidebar->HandleClick(relativeX, relativeY);
-                }
-                else if (hitWidget)
+                if (hitWidget)
                 {
                     hitWidget->TriggerClick();
                 }
@@ -216,5 +217,27 @@ namespace Skoga
         m_UserWidget = layout;
         m_MainContainer->ClearChildren();
         m_MainContainer->AddChild(m_UserWidget);
+    }
+
+    void Application::ExecuteMainThreadQueue()
+    {
+        std::scoped_lock<std::mutex> lock(m_MainThreadQueueMutex);
+
+        for (auto& func : m_MainThreadQueue)
+            func();
+
+        m_MainThreadQueue.clear();
+    }
+
+    void Application::SubmitToMainThread(const std::function<void()>& function)
+    {
+        std::scoped_lock<std::mutex> lock(m_MainThreadQueueMutex);
+
+        m_MainThreadQueue.emplace_back(function);
+    }
+
+    Application* Application::GetInstance()
+    {
+        return g_ApplicationInstance;
     }
 } // namespace Skoga

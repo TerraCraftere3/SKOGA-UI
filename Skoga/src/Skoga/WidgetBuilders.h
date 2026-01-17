@@ -33,8 +33,8 @@ namespace Skoga
         (parent->AddChild(ToWidget(std::forward<Children>(child))), ...);
     }
 
-    // ========== TextBuilder ==========
-    class TextBuilder
+    // ========== Text ==========
+    class Text
     {
     private:
         const char* m_Text;
@@ -45,39 +45,39 @@ namespace Skoga
         VerticalAlignment m_VAlign = VerticalAlignment::Top;
 
     public:
-        explicit TextBuilder(const char* text) : m_Text(text) {}
+        explicit Text(const char* text) : m_Text(text) {}
 
-        TextBuilder& FontSize(float size)
+        Text& FontSize(float size)
         {
             m_FontSize = size;
             return *this;
         }
 
-        TextBuilder& Color(const Skoga::Color& color)
+        Text& Color(const Skoga::Color& color)
         {
             m_Color = color;
             return *this;
         }
 
-        TextBuilder& Font(const char* fontName)
+        Text& Font(const char* fontName)
         {
             m_FontName = fontName;
             return *this;
         }
 
-        TextBuilder& HAlign(HorizontalAlignment align)
+        Text& HAlign(HorizontalAlignment align)
         {
             m_HAlign = align;
             return *this;
         }
 
-        TextBuilder& VAlign(VerticalAlignment align)
+        Text& VAlign(VerticalAlignment align)
         {
             m_VAlign = align;
             return *this;
         }
 
-        TextBuilder& Align(HorizontalAlignment hAlign, VerticalAlignment vAlign)
+        Text& Align(HorizontalAlignment hAlign, VerticalAlignment vAlign)
         {
             m_HAlign = hAlign;
             m_VAlign = vAlign;
@@ -315,7 +315,7 @@ namespace Skoga
         return container;
     }
 
-    // ========== Stack (Layout) builder ==========
+    // ========== Stack (Layout) builder - expands to fill space ==========
     template <typename... Children>
     inline Ref<LayoutWidget> Stack(LayoutDirection direction, Children... child)
     {
@@ -325,9 +325,58 @@ namespace Skoga
         return stack;
     }
 
-    // ========== Text function returns TextBuilder ==========
-    inline TextBuilder Text(const char* text)
+    // ========== Flex Stack - only uses needed space, aligns at start ==========
+    template <typename... Children>
+    inline Ref<LayoutWidget> FlexStack(LayoutDirection direction, Children... child)
     {
-        return TextBuilder(text);
+        auto stack = CreateRef<LayoutWidget>(direction);
+        // Don't set flexGrow - only uses space needed
+        YGNodeStyleSetAlignItems(stack->GetLayoutNode(), YGAlignFlexStart);
+        AddChildren(stack, child...);
+        return stack;
     }
+
+    // ========== VStack - vertical flex stack (column, compact) ==========
+    template <typename... Children>
+    inline Ref<LayoutWidget> VStack(Children... child)
+    {
+        auto stack = CreateRef<LayoutWidget>(LayoutDirection::Column);
+        YGNodeStyleSetAlignItems(stack->GetLayoutNode(), YGAlignFlexStart);
+        AddChildren(stack, child...);
+        return stack;
+    }
+
+    // ========== HStack - horizontal flex stack (row, compact) ==========
+    template <typename... Children>
+    inline Ref<LayoutWidget> HStack(Children... child)
+    {
+        auto stack = CreateRef<LayoutWidget>(LayoutDirection::Row);
+        YGNodeStyleSetAlignItems(stack->GetLayoutNode(), YGAlignFlexStart);
+        AddChildren(stack, child...);
+        return stack;
+    }
+
+    // ========== Spacer - flexible space filler ==========
+    inline Ref<ContainerWidget> Spacer()
+    {
+        auto spacer = CreateRef<ContainerWidget>();
+        YGNodeStyleSetFlexGrow(spacer->GetLayoutNode(), 1.0f);
+        return spacer;
+    }
+
+    inline Ref<ContainerWidget> Spacer(float size, LayoutDirection direction)
+    {
+        auto spacer = CreateRef<ContainerWidget>();
+        if (direction == LayoutDirection::Row)
+        {
+            YGNodeStyleSetWidth(spacer->GetLayoutNode(), size);
+        }
+        else
+        {
+            YGNodeStyleSetHeight(spacer->GetLayoutNode(), size);
+        }
+        return spacer;
+    }
+
+    // ========== Text function returns Text ==========
 } // namespace Skoga
