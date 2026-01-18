@@ -1,0 +1,89 @@
+<box flex-direction="row" flex="true">
+    <!-- Sidebar -->
+    <box background-color="#2c3e50" width="250" padding="20" flex-direction="column">
+        <box padding="15" margin-bottom="30">
+            <text horizontal-align="center">My Application</text>
+        </box>
+        
+        <box background-color="#34495e" padding="15" margin-bottom="10" border-radius="5">
+            <text>Dashboard</text>
+        </box>
+        
+        <box background-color="#34495e" padding="15" margin-bottom="10" border-radius="5">
+            <text>Projects</text>
+        </box>
+        
+        <box background-color="#34495e" padding="15" margin-bottom="10" border-radius="5">
+            <text>Settings</text>
+        </box>
+        
+        <box background-color="#34495e" padding="15" margin-bottom="10" border-radius="5">
+            <text>Help</text>
+        </box>
+    </box>
+    
+    <!-- Main Content Area -->
+    <box flex-direction="column" flex="true" background-color="#ecf0f1">
+        <!-- Header -->
+        <box background-color="#ffffff" padding="20" border-color="#bdc3c7">
+            <box flex-direction="row" justify-content="space-between" align-items="center">
+                <text color="#34495e">Welcome Back!</text>
+                <box background-color="#3498db" padding="10" padding-left="20" padding-right="20" border-radius="5">
+                    <text>Logout</text>
+                </box>
+            </box>
+        </box>
+        
+        <!-- Content -->
+        <box flex="true" padding="30" flex-direction="column">
+            <box margin-bottom="20">
+                <text color="#2c3e50">Dashboard</text>
+            </box>
+            
+            <!-- Cards Row -->
+            <box flex-direction="row" margin-bottom="20">
+                <box background-color="#3498db" padding="25" margin-right="15" flex="true" border-radius="8">
+                    <box flex-direction="column">
+                        <text color="#ffffff">Total Projects</text>
+                        <text color="#ffffff">24</text>
+                    </box>
+                </box>
+                
+                <box background-color="#2ecc71" padding="25" margin-right="15" flex="true" border-radius="8">
+                    <box flex-direction="column">
+                        <text color="#ffffff">Active Tasks</text>
+                        <text color="#ffffff">12</text>
+                    </box>
+                </box>
+                
+                <box background-color="#e74c3c" padding="25" flex="true" border-radius="8">
+                    <box flex-direction="column">
+                        <text color="#ffffff">Notifications</text>
+                        <text color="#ffffff">5</text>
+                    </box>
+                </box>
+            </box>
+            
+            <!-- Content Panel -->
+            <box background-color="#ffffff" padding="30" flex="true" border-radius="8">
+                <box flex-direction="column">
+                    <box margin-bottom="15">
+                        <text color="#2c3e50">Recent Activity</text>
+                    </box>
+                    
+                    <box background-color="#ecf0f1" padding="15" margin-bottom="10" border-radius="5">
+                        <text color="#34495e">Project Alpha updated 2 hours ago</text>
+                    </box>
+                    
+                    <box background-color="#ecf0f1" padding="15" margin-bottom="10" border-radius="5">
+                        <text color="#34495e">New task assigned to you</text>
+                    </box>
+                    
+                    <box background-color="#ecf0f1" padding="15" border-radius="5">
+                        <text color="#34495e">Meeting scheduled for tomorrow</text>
+                    </box>
+                </box>
+            </box>
+        </box>
+    </box>
+</box>

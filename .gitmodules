@@ -7,3 +7,6 @@
 [submodule "Vendor/yoga"]
 	path = Vendor/yoga
 	url = https://github.com/facebook/yoga
+[submodule "Vendor/tinyxml2"]
+	path = Vendor/tinyxml2
+	url = https://github.com/leethomason/tinyxml2

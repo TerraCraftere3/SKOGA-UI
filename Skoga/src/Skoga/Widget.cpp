@@ -52,6 +52,8 @@ namespace Skoga
 
     void Widget::OnLayout()
     {
+        ApplyStyle();
+
         for (auto& child : m_Children)
             child->OnLayout();
     }
@@ -91,6 +93,7 @@ namespace Skoga
         nvgBeginPath(vg);
         nvgRect(vg, 0, 0, Width(), Height());
         nvgStrokeColor(vg, nvgRGBAf(c.R, c.G, c.B, 0.5f));
+        nvgStrokeWidth(vg, 3.0f);
         nvgStroke(vg);
 
         DrawSelf(vg);

@@ -12,7 +12,7 @@ target_include_directories(skoga PUBLIC
 )
 
 # Link internal libraries
-target_link_libraries(skoga PUBLIC glfw glad yogacore)
+target_link_libraries(skoga PUBLIC glfw glad yogacore tinyxml2)
 target_include_directories(skoga PUBLIC
     "${NANOVG_INCLUDE_DIR}"
 )
