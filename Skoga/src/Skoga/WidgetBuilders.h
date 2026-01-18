@@ -1,12 +1,10 @@
 #pragma once
 
 #include "Skoga/Core.h"
+#include "Skoga/Stylesheet.h"
 #include "Skoga/Widget.h"
-#include "Skoga/Widgets/Background.h"
 #include "Skoga/Widgets/Button.h"
 #include "Skoga/Widgets/Container.h"
-#include "Skoga/Widgets/Layout.h"
-#include "Skoga/Widgets/Padding.h"
 #include "Skoga/Widgets/Text.h"
 
 #include <yoga/Yoga.h>
@@ -33,35 +31,147 @@ namespace Skoga
         (parent->AddChild(ToWidget(std::forward<Children>(child))), ...);
     }
 
+    // ========== StyleBuilder - Generic style-based container builder ==========
+    class Box
+    {
+    private:
+        Style m_Style;
+        std::vector<Ref<Widget>> m_Children;
+
+    public:
+        template <typename... Children>
+        explicit Box(Children... child)
+        {
+            (m_Children.push_back(ToWidget(child)), ...);
+        }
+
+        Box& BgColor(const Color& color)
+        {
+            m_Style.BackgroundColor = color;
+            return *this;
+        }
+
+        Box& BorderColor(const Color& color)
+        {
+            m_Style.BorderColor = color;
+            return *this;
+        }
+
+        Box& BorderRadius(float radius)
+        {
+            m_Style.BorderRadius = radius;
+            return *this;
+        }
+
+        Box& Flex(float grow = 1.0f)
+        {
+            m_Style.FlexGrow = grow;
+            return *this;
+        }
+
+        Box& FlexDirection(Skoga::FlexDirection dir)
+        {
+            m_Style.FlexDirection = dir;
+            return *this;
+        }
+
+        Box& JustifyContent(Skoga::JustifyContent justify)
+        {
+            m_Style.JustifyContent = justify;
+            return *this;
+        }
+
+        Box& AlignItems(Skoga::AlignItems align)
+        {
+            m_Style.AlignItems = align;
+            return *this;
+        }
+
+        Box& Padding(float value)
+        {
+            m_Style.SetPadding(value);
+            return *this;
+        }
+
+        Box& Padding(float vertical, float horizontal)
+        {
+            m_Style.SetPadding(vertical, horizontal);
+            return *this;
+        }
+
+        Box& Padding(float top, float right, float bottom, float left)
+        {
+            m_Style.SetPadding(top, right, bottom, left);
+            return *this;
+        }
+
+        Box& Margin(float value)
+        {
+            m_Style.SetMargin(value);
+            return *this;
+        }
+
+        Box& Margin(float vertical, float horizontal)
+        {
+            m_Style.SetMargin(vertical, horizontal);
+            return *this;
+        }
+
+        Box& Margin(float top, float right, float bottom, float left)
+        {
+            m_Style.SetMargin(top, right, bottom, left);
+            return *this;
+        }
+
+        Box& Width(float width)
+        {
+            m_Style.Width = width;
+            return *this;
+        }
+
+        Box& Height(float height)
+        {
+            m_Style.Height = height;
+            return *this;
+        }
+
+        template <typename... Children>
+        Box& Add(Children... child)
+        {
+            (m_Children.push_back(ToWidget(child)), ...);
+            return *this;
+        }
+
+        Ref<ContainerWidget> Build()
+        {
+            auto box = CreateRef<ContainerWidget>();
+            box->GetStyle() = m_Style;
+            for (auto& child : m_Children)
+            {
+                box->AddChild(child);
+            }
+            box->ApplyStyle();
+            return box;
+        }
+
+        operator Ref<ContainerWidget>() { return Build(); }
+    };
+
     // ========== Text ==========
     class Text
     {
     private:
         const char* m_Text;
-        float m_FontSize = 16.0f;
-        Color m_Color = Gray_100;
-        const char* m_FontName = FontSegoeui;
         HorizontalAlignment m_HAlign = HorizontalAlignment::Left;
         VerticalAlignment m_VAlign = VerticalAlignment::Top;
 
     public:
         explicit Text(const char* text) : m_Text(text) {}
 
-        Text& FontSize(float size)
+        Text& Align(HorizontalAlignment hAlign, VerticalAlignment vAlign)
         {
-            m_FontSize = size;
-            return *this;
-        }
-
-        Text& Color(const Skoga::Color& color)
-        {
-            m_Color = color;
-            return *this;
-        }
-
-        Text& Font(const char* fontName)
-        {
-            m_FontName = fontName;
+            m_HAlign = hAlign;
+            m_VAlign = vAlign;
             return *this;
         }
 
@@ -77,16 +187,9 @@ namespace Skoga
             return *this;
         }
 
-        Text& Align(HorizontalAlignment hAlign, VerticalAlignment vAlign)
-        {
-            m_HAlign = hAlign;
-            m_VAlign = vAlign;
-            return *this;
-        }
-
         Ref<TextWidget> Build()
         {
-            auto textWidget = CreateRef<TextWidget>(m_Text, m_FontSize, m_Color, m_FontName);
+            auto textWidget = CreateRef<TextWidget>(m_Text);
             textWidget->SetHorizontalAlignment(m_HAlign);
             textWidget->SetVerticalAlignment(m_VAlign);
             YGNodeStyleSetFlexGrow(textWidget->GetLayoutNode(), 1.0f);
@@ -96,104 +199,20 @@ namespace Skoga
         operator Ref<TextWidget>() { return Build(); }
     };
 
-    // ========== Background ==========
-    class Background
-    {
-    private:
-        Color m_Color;
-        float m_CornerRadius = 0.0f;
-        std::vector<Ref<Widget>> m_Children;
-
-    public:
-        explicit Background(const Color& color) : m_Color(color) {}
-
-        template <typename... Children>
-        explicit Background(const Color& color, Children... child) : m_Color(color)
-        {
-            (m_Children.push_back(ToWidget(child)), ...);
-        }
-
-        Background& CornerRadius(float radius)
-        {
-            m_CornerRadius = radius;
-            return *this;
-        }
-
-        template <typename... Children>
-        Background& Add(Children... child)
-        {
-            (m_Children.push_back(ToWidget(child)), ...);
-            return *this;
-        }
-
-        Ref<BackgroundWidget> Build()
-        {
-            auto background = CreateRef<BackgroundWidget>(m_Color);
-            YGNodeStyleSetFlexGrow(background->GetLayoutNode(), 1.0f);
-            for (auto& child : m_Children)
-            {
-                background->AddChild(child);
-            }
-            background->SetCornerRadius(m_CornerRadius);
-            return background;
-        }
-
-        operator Ref<BackgroundWidget>() { return Build(); }
-    };
-
     // ========== Button ==========
     class Button
     {
     private:
-        Color m_Color;
-        Color m_HoverColor;
-        float m_CornerRadius = 4.0f;
-        float m_PaddingTop = 8.0f;
-        float m_PaddingRight = 12.0f;
-        float m_PaddingBottom = 8.0f;
-        float m_PaddingLeft = 12.0f;
         std::vector<Ref<Widget>> m_Children;
         Widget::OnClickCallback m_OnClick;
 
     public:
-        explicit Button(const Color& color) : m_Color(color)
-        {
-            // Auto-generate hover color (darker)
-            m_HoverColor = Color(color.R * 0.85f, color.G * 0.85f, color.B * 0.85f, color.A);
-        }
+        Button() = default;
 
         template <typename... Children>
-        explicit Button(const Color& color, Children... child) : m_Color(color)
+        explicit Button(Children... child)
         {
-            m_HoverColor = Color(color.R * 0.85f, color.G * 0.85f, color.B * 0.85f, color.A);
             (m_Children.push_back(ToWidget(child)), ...);
-        }
-
-        Button& HoverColor(const Color& color)
-        {
-            m_HoverColor = color;
-            return *this;
-        }
-
-        Button& CornerRadius(float radius)
-        {
-            m_CornerRadius = radius;
-            return *this;
-        }
-
-        Button& Padding(float value)
-        {
-            m_PaddingTop = m_PaddingRight = m_PaddingBottom = m_PaddingLeft = value;
-            return *this;
-        }
-
-        Button& Padding(float top, float right, float bottom, float left)
-        {
-            m_PaddingTop = top;
-            m_PaddingRight = right;
-            m_PaddingBottom = bottom;
-            m_PaddingLeft = left;
-            return *this;
         }
 
         Button& OnClick(Widget::OnClickCallback callback)
@@ -211,10 +230,7 @@ namespace Skoga
 
         Ref<ButtonWidget> Build()
         {
-            auto button = CreateRef<ButtonWidget>(m_Color);
-            button->SetHoverColor(m_HoverColor);
-            button->SetPadding(m_PaddingTop, m_PaddingRight, m_PaddingBottom, m_PaddingLeft);
-            button->SetCornerRadius(m_CornerRadius);
+            auto button = CreateRef<ButtonWidget>();
             if (m_OnClick)
             {
                 button->SetOnClick(m_OnClick);
@@ -229,154 +245,5 @@ namespace Skoga
         operator Ref<ButtonWidget>() { return Build(); }
     };
 
-    // ========== PaddingBuilder ==========
-    class Padding
-    {
-    private:
-        float m_Top;
-        float m_Right;
-        float m_Bottom;
-        float m_Left;
-        std::vector<Ref<Widget>> m_Children;
-
-    public:
-        explicit Padding(float value) : m_Top(value), m_Right(value), m_Bottom(value), m_Left(value) {}
-
-        Padding(float top, float right, float bottom, float left)
-            : m_Top(top), m_Right(right), m_Bottom(bottom), m_Left(left)
-        {
-        }
-
-        template <typename... Children>
-        explicit Padding(float value, Children... child) : m_Top(value), m_Right(value), m_Bottom(value), m_Left(value)
-        {
-            (m_Children.push_back(ToWidget(child)), ...);
-        }
-
-        template <typename... Children>
-        Padding(float top, float right, float bottom, float left, Children... child)
-            : m_Top(top), m_Right(right), m_Bottom(bottom), m_Left(left)
-        {
-            (m_Children.push_back(ToWidget(child)), ...);
-        }
-
-        Padding& Top(float value)
-        {
-            m_Top = value;
-            return *this;
-        }
-
-        Padding& Right(float value)
-        {
-            m_Right = value;
-            return *this;
-        }
-
-        Padding& Bottom(float value)
-        {
-            m_Bottom = value;
-            return *this;
-        }
-
-        Padding& Left(float value)
-        {
-            m_Left = value;
-            return *this;
-        }
-
-        template <typename... Children>
-        Padding& Add(Children... child)
-        {
-            (m_Children.push_back(ToWidget(child)), ...);
-            return *this;
-        }
-
-        Ref<PaddingWidget> Build()
-        {
-            auto padding = CreateRef<PaddingWidget>(m_Top, m_Right, m_Bottom, m_Left);
-            YGNodeStyleSetFlexGrow(padding->GetLayoutNode(), 1.0f);
-            for (auto& child : m_Children)
-            {
-                padding->AddChild(child);
-            }
-            return padding;
-        }
-
-        operator Ref<PaddingWidget>() { return Build(); }
-    };
-
-    // ========== Container builder ==========
-    template <typename... Children>
-    inline Ref<ContainerWidget> Container(Children... child)
-    {
-        auto container = CreateRef<ContainerWidget>();
-        YGNodeStyleSetFlexGrow(container->GetLayoutNode(), 1.0f);
-        AddChildren(container, child...);
-        return container;
-    }
-
-    // ========== Stack (Layout) builder - expands to fill space ==========
-    template <typename... Children>
-    inline Ref<LayoutWidget> Stack(LayoutDirection direction, Children... child)
-    {
-        auto stack = CreateRef<LayoutWidget>(direction);
-        YGNodeStyleSetFlexGrow(stack->GetLayoutNode(), 1.0f);
-        AddChildren(stack, child...);
-        return stack;
-    }
-
-    // ========== Flex Stack - only uses needed space, aligns at start ==========
-    template <typename... Children>
-    inline Ref<LayoutWidget> FlexStack(LayoutDirection direction, Children... child)
-    {
-        auto stack = CreateRef<LayoutWidget>(direction);
-        // Don't set flexGrow - only uses space needed
-        YGNodeStyleSetAlignItems(stack->GetLayoutNode(), YGAlignFlexStart);
-        AddChildren(stack, child...);
-        return stack;
-    }
-
-    // ========== VStack - vertical flex stack (column, compact) ==========
-    template <typename... Children>
-    inline Ref<LayoutWidget> VStack(Children... child)
-    {
-        auto stack = CreateRef<LayoutWidget>(LayoutDirection::Column);
-        YGNodeStyleSetAlignItems(stack->GetLayoutNode(), YGAlignFlexStart);
-        AddChildren(stack, child...);
-        return stack;
-    }
-
-    // ========== HStack - horizontal flex stack (row, compact) ==========
-    template <typename... Children>
-    inline Ref<LayoutWidget> HStack(Children... child)
-    {
-        auto stack = CreateRef<LayoutWidget>(LayoutDirection::Row);
-        YGNodeStyleSetAlignItems(stack->GetLayoutNode(), YGAlignFlexStart);
-        AddChildren(stack, child...);
-        return stack;
-    }
-
-    // ========== Spacer - flexible space filler ==========
-    inline Ref<ContainerWidget> Spacer()
-    {
-        auto spacer = CreateRef<ContainerWidget>();
-        YGNodeStyleSetFlexGrow(spacer->GetLayoutNode(), 1.0f);
-        return spacer;
-    }
-
-    inline Ref<ContainerWidget> Spacer(float size, LayoutDirection direction)
-    {
-        auto spacer = CreateRef<ContainerWidget>();
-        if (direction == LayoutDirection::Row)
-        {
-            YGNodeStyleSetWidth(spacer->GetLayoutNode(), size);
-        }
-        else
-        {
-            YGNodeStyleSetHeight(spacer->GetLayoutNode(), size);
-        }
-        return spacer;
-    }
-
-    // ========== Text function returns Text ==========
 } // namespace Skoga
+

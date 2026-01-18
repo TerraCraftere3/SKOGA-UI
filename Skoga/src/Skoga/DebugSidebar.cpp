@@ -25,18 +25,24 @@ namespace Skoga
     {
         // clang-format off
         ClearChildren();
-        AddChild(Container(
-            Background(Gray_800,
-                Padding(PADDING,
-                    Text("Debug Tools")
-                        .FontSize(16.0f)
-                        .Color(White)
-                        .Font(FontConsolas)
-                        .HAlign(HorizontalAlignment::Center)
-                        .VAlign(VerticalAlignment::Middle)
-                )
-            )
-        ));
+        
+        // Create styled debug text
+        auto debugText = Text("Debug Tools")
+            .HAlign(HorizontalAlignment::Center)
+            .VAlign(VerticalAlignment::Middle)
+            .Build();
+        debugText->GetStyle().FontSize = 16.0f;
+        debugText->GetStyle().TextColor = White;
+        debugText->GetStyle().FontFamily = FontConsolas;
+        
+        // Create styled debug box
+        auto debugBox = Box()
+            .BgColor(Gray_800)
+            .Padding(PADDING)
+            .Add(debugText)
+            .Build();
+        
+        AddChild(debugBox);
         // clang-format on
     }
 

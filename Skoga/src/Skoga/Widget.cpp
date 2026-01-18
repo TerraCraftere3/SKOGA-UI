@@ -179,4 +179,19 @@ namespace Skoga
         return x >= 0 && x <= w && y >= 0 && y <= h;
     }
 
+    Style& Widget::GetStyle()
+    {
+        return m_Style;
+    }
+
+    const Style& Widget::GetStyle() const
+    {
+        return m_Style;
+    }
+
+    void Widget::ApplyStyle()
+    {
+        Skoga::ApplyStyle(m_LayoutNode, m_Style);
+    }
+
 } // namespace Skoga

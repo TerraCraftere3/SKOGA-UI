@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Skoga/Core.h"
+#include "Skoga/Stylesheet.h"
 
 #include <yoga/Yoga.h>
 #include <functional>
@@ -62,6 +63,11 @@ namespace Skoga
         float Width() const;
         float Height() const;
 
+        // Styling
+        Style& GetStyle();
+        const Style& GetStyle() const;
+        void ApplyStyle();
+
     protected:
         // Override this to draw the widget itself
         virtual void DrawSelf(NVGcontext* vg) = 0;
@@ -73,6 +79,7 @@ namespace Skoga
         YGNodeRef m_LayoutNode = nullptr;
         OnClickCallback m_OnClick;
         OnHoverCallback m_OnHover;
+        Style m_Style;
     };
 
 } // namespace Skoga

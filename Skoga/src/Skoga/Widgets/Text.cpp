@@ -1,13 +1,32 @@
 #include "Text.h"
+#include "Skoga/Stylesheet.h"
 
 #include <nanovg.h>
 
 namespace Skoga
 {
-    TextWidget::TextWidget(const char* text, float fontSize, Color color, const char* fontName)
-        : m_Text(text), m_FontSize(fontSize), m_Color(color), m_FontName(fontName)
+    TextWidget::TextWidget(const char* text) : m_Text(text)
     {
+        // Set default font size if not specified in style
+        if (!GetStyle().FontSize.has_value())
+        {
+            GetStyle().FontSize = 16.0f;
+        }
+
+        // Set default text color if not specified
+        if (!GetStyle().TextColor.has_value())
+        {
+            GetStyle().TextColor = Gray_100;
+        }
+
+        // Set default font if not specified
+        if (!GetStyle().FontFamily.has_value())
+        {
+            GetStyle().FontFamily = FontSegoeui;
+        }
+
         // Set minimum size for the text widget
+        float fontSize = GetStyle().FontSize.value_or(16.0f);
         YGNodeStyleSetMinHeight(GetLayoutNode(), fontSize * 1.5f);
         YGNodeStyleSetMinWidth(GetLayoutNode(), 50.0f);
     }
@@ -15,22 +34,6 @@ namespace Skoga
     void TextWidget::SetText(const char* text)
     {
         m_Text = text;
-    }
-
-    void TextWidget::SetFontSize(float fontSize)
-    {
-        m_FontSize = fontSize;
-        YGNodeStyleSetMinHeight(GetLayoutNode(), fontSize * 1.5f);
-    }
-
-    void TextWidget::SetFontName(const char* fontName)
-    {
-        m_FontName = fontName;
-    }
-
-    void TextWidget::SetColor(const Color& color)
-    {
-        m_Color = color;
     }
 
     void TextWidget::SetHorizontalAlignment(HorizontalAlignment alignment)
@@ -45,9 +48,15 @@ namespace Skoga
 
     void TextWidget::DrawSelf(NVGcontext* vg)
     {
-        nvgFontSize(vg, m_FontSize);
-        nvgFontFace(vg, m_FontName);
-        nvgFillColor(vg, nvgRGBAf(m_Color.R, m_Color.G, m_Color.B, m_Color.A));
+        const auto& style = GetStyle();
+
+        float fontSize = style.FontSize.value_or(16.0f);
+        const char* fontName = style.FontFamily.value_or(FontSegoeui);
+        Color textColor = style.TextColor.value_or(Color(0.9f, 0.9f, 0.9f));
+
+        nvgFontSize(vg, fontSize);
+        nvgFontFace(vg, fontName);
+        nvgFillColor(vg, nvgRGBAf(textColor.R, textColor.G, textColor.B, textColor.A));
 
         // Convert alignment enums to NanoVG flags
         int hAlign = NVG_ALIGN_LEFT;
